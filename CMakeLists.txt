@@ -15,7 +15,10 @@ pico_sdk_init()
 add_executable(
   airFreshener
   main.c
+  MyTimer.c
 )
+
+pico_enable_stdio_usb(airFreshener 1)
 
 pico_add_extra_outputs(airFreshener)
 
