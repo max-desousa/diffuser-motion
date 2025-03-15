@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/pwm.h"
 #include "prototypes.h"
 #include "MyTimer.h"
-#include "servo.h"
 
 #define MOTION_SENSOR_PIN 16
-#define SERVO_PIN 15
+#define SERVO_PIN 1
 #define STEADY_STATE_PWM 0
 #define BUTTON_PRESS_PWM 255
 //#define DEVICE_ON_DURATION 300000
@@ -40,11 +38,10 @@ void setupMotionDetector() {
 
 void setupButtonServo() {
   /* setup servo that will toggle buttons of device */
-
   gpio_set_function(SERVO_PIN, GPIO_FUNC_PWM);
   slice_number = pwm_gpio_to_slice_num(SERVO_PIN);
   pwm_set_wrap(slice_number, 255);
-  pwm_set_chan_level(slice_number, PWM_CHAN_B, STEADY_STATE_PWM);
+  pwm_set_chan_level(slice_number, PWM_CHAN_A, STEADY_STATE_PWM);
   pwm_set_enabled(slice_number, true);
 }
 
@@ -69,7 +66,7 @@ void setup() {
  ******************************************************************************/
 void executeButtonPress() {
   printf("Button was pressed\n");
-  pwm_set_chan_level(slice_number, PWM_CHAN_B, BUTTON_PRESS_PWM);
+  pwm_set_chan_level(slice_number, PWM_CHAN_A, BUTTON_PRESS_PWM);
   sleep_ms(1000);
 }
 
@@ -95,7 +92,7 @@ void TurnOnAirFreshener() {
  * button on the device. 
  ******************************************************************************/
 void returnToSteadyState() {
-  pwm_set_chan_level(slice_number, PWM_CHAN_B, STEADY_STATE_PWM);
+  pwm_set_chan_level(slice_number, PWM_CHAN_A, STEADY_STATE_PWM);
   sleep_ms(1000);
 }
 
@@ -115,13 +112,23 @@ void TurnDeviceOff() {
 int main() {
   setup();
   while(true) {
-    printf("Starting a new loop...\n");
-    uint8_t randomVal = (rand() % 180);
-    slice_number = pwm_gpio_to_slice_num(SERVO_PIN);
-    printf("\tSlice number is: %d\n", slice_number);
-    printf("\trandomVal is: %d\n", randomVal);
-    pwm_set_chan_level(slice_number, PWM_CHAN_B, randomVal);
-    sleep_ms(5000);
+    printf("Checking if button is pressed...\n");
+    if(MotionDetected) {
+      if (DeviceOn) {
+        printf("Resetting timer for device...\n");
+        SetTimer(DEVICE_ON_DURATION);
+      }
+      else {
+        TurnOnAirFreshener();
+      }
+    }
+
+    sleep_ms(INTERVAL_DURATION);
+
+    if (DecrementTimer(INTERVAL_DURATION)) {
+      TurnDeviceOff();
+    }
+    printf("\tValue of timer == %d\n", myTimer);
   }
   return 0;
 }
