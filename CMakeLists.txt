@@ -16,6 +16,7 @@ add_executable(
   airFreshener
   main.c
   MyTimer.c
+  servo.c
 )
 
 pico_enable_stdio_usb(airFreshener 1)

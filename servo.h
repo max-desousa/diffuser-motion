@@ -3,21 +3,23 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "hardware/gpio.h"
+#include "hardware/pwm.h"
 
 typedef struct {
-  uint gpio;
-  uint slice;
-  uint chan;
-  uint speed;
-  uint resolution;
+  uint8_t gpio;
+  uint8_t slice;
+  uint8_t chan;
+  uint32_t speed;
+  uint32_t resolution;
   bool on;
   bool invert;
 } Servo;
 
-void ServoInit(Servo *s, uint gpio, bool invert);
+void ServoInit(Servo *s, uint8_t gpio, bool invert);
 void ServoOn(Servo *s);
 void ServoOff(Servo *s);
-void ServoPosition(Servo *s,uint p);
-uint32_t pwm_set_freq_duty(uint slice_num, uint chan,uint32_t f, int d);
+void ServoPosition(Servo *s, uint32_t p);
+uint32_t pwm_set_freq_duty(uint8_t slice_num, uint8_t chan, uint32_t f, int d);
 
 #endif

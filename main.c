@@ -21,6 +21,7 @@ bool MotionDetected = false;
 uint8_t slice_number;
 bool DeviceOn = false;
 extern uint32_t myTimer;
+Servo ButtonServo;
 /* End Global Variable Declarations */
 
 void interruptCallback(uint _gpio,  uint32_t _eventMask) {
@@ -40,12 +41,7 @@ void setupMotionDetector() {
 
 void setupButtonServo() {
   /* setup servo that will toggle buttons of device */
-
-  gpio_set_function(SERVO_PIN, GPIO_FUNC_PWM);
-  slice_number = pwm_gpio_to_slice_num(SERVO_PIN);
-  pwm_set_wrap(slice_number, 255);
-  pwm_set_chan_level(slice_number, PWM_CHAN_B, STEADY_STATE_PWM);
-  pwm_set_enabled(slice_number, true);
+  ServoInit(&ButtonServo, SERVO_PIN, false);
 }
 
 void setup() {

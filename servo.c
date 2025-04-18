@@ -3,7 +3,7 @@
 /*******************************************************************************
  *
  ******************************************************************************/
-void ServoInit(Servo *s, uint gpio, bool invert) {
+void ServoInit(Servo *s, uint8_t gpio, bool invert) {
   gpio_set_function(gpio, GPIO_FUNC_PWM);
   s->gpio = gpio;
   s->slice = pwm_gpio_to_slice_num(gpio);
@@ -42,11 +42,11 @@ void ServoOff(Servo *s) {
 /*******************************************************************************
  *
  ******************************************************************************/
-void ServoPosition(Servo *s,uint p) {
+void ServoPosition(Servo *s, uint32_t p) {
   pwm_set_dutyH(s->slice, s->chan, p*10+250);
 }
 
-uint32_t pwm_set_freq_duty(uint slice_num, uint chan,uint32_t f, int d) {
+uint32_t pwm_set_freq_duty(uint8_t slice_num, uint8_t chan, uint32_t f, int d) {
   uint32_t clock = 125000000;
   uint32_t divider16 = clock / f / 4096 + (clock % (f * 4096) != 0);
   if (divider16 / 16 == 0) {
